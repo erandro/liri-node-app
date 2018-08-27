@@ -1,25 +1,16 @@
 require("dotenv").config();
-var Spotify = require('node-spotify-api');
-var omdb = require('omdb');
+var Spotify = require("node-spotify-api");
 var request = require("request");
 var keys = require("./keys.js");
-var moment = require('moment');
+var moment = require("moment");
+var fs = require("fs");
 
 var spotify = new Spotify(keys.spotify);
 var action = process.argv[2];
+var searchItem = process.argv[3];
 
-if (action === "concert-this") {
-    concertThis();
-};
-if (action === "spotify-this-song") {
-    spotifyThisSong();
-};
-if (action === "movie-this") {
-    movieThis();
-};
-
-function concertThis() {
-    var preformerName = process.argv[3];
+function concertThis(artist_name) {
+    var preformerName = artist_name;
     request("https://rest.bandsintown.com/artists/" + preformerName + "/events?app_id=codingbootcamp", function (error, response, body) {
         if (!error && response.statusCode === 200) {
             console.log(JSON.parse(body));
@@ -30,8 +21,8 @@ function concertThis() {
         };
     });
 };
-function spotifyThisSong() {
-    var songName = process.argv[3];
+function spotifyThisSong(user_song) {
+    var songName = user_song;
     if (songName === undefined) {
         songName = "The Sign";
     };
@@ -66,8 +57,8 @@ function spotifyThisSong() {
         console.log("Album: " + songInfo.album.name);
     });
 };
-function movieThis() {
-    var movieName = process.argv[3];
+function movieThis(user_movie) {
+    var movieName = user_movie;
     request("http://www.omdbapi.com/?t=" + movieName + "&apikey=trilogy", function (error, response, body) {
         if (!error && response.statusCode === 200) {
             //console.log(JSON.parse(body));
@@ -82,3 +73,50 @@ function movieThis() {
         };
     });
 };
+function doWhatItSays() {
+    fs.readFile("random.txt", "utf8", function (error, data) {
+        if (error) {
+            return console.log(error);
+        }
+        var randomAction = data.split(",");
+        action = randomAction[0];
+        searchItem = randomAction[1];
+        runLiri();
+    });
+}
+function logActions() {
+    if (searchItem === undefined) {
+        searchItem = "";
+    };
+    fs.appendFile("log.txt", action + "," + searchItem + "\r\n", function (err) {
+        if (err) {
+            console.log(err);
+        }
+        else {
+            console.log("Content Added!");
+        }
+    });
+}
+function runLiri() {
+    switch (action) {
+        case "concert-this":
+            concertThis(searchItem);
+            break;
+
+        case "spotify-this-song":
+            spotifyThisSong(searchItem);
+            break;
+
+        case "movie-this":
+            movieThis(searchItem);
+            break;
+
+        case "do-what-it-says":
+            doWhatItSays();
+            break;
+    };
+    logActions();
+}
+
+runLiri();
+
