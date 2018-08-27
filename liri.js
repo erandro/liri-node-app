@@ -16,11 +16,12 @@ function concertThis(artist_name) {
     };
     request("https://rest.bandsintown.com/artists/" + preformerName + "/events?app_id=codingbootcamp", function (error, response, body) {
         if (!error && response.statusCode === 200) {
-            console.log(JSON.parse(body));
-            //console.log("Venue: " + body.venue.name);
-            //console.log("City: " + body[0].venue);
-            //var eventDate = moment(body[0].datetime).format("MM-DD-YYYY");
-            //console.log("Date: " + eventDate);
+            //console.log(JSON.parse(body));
+            var concertIinfo = JSON.parse(body);
+            console.log("Venue: " + concertIinfo[0].venue.name);
+            console.log("City: " + concertIinfo[0].venue.city);
+            var eventDate = moment(concertIinfo[0].datetime).format("MM-DD-YYYY");
+            console.log("Date: " + eventDate);
         };
     });
 };
@@ -61,21 +62,23 @@ function spotifyThisSong(user_song) {
     });
 };
 function movieThis(user_movie) {
+    console.log(user_movie)
     var movieName = user_movie;
-    if (movieName === undefined) {
-        movieName = "shrek";
-    };
+    // if (movieName === undefined) {
+    //     movieName = "shrek";
+    // };
     request("http://www.omdbapi.com/?t=" + movieName + "&apikey=trilogy", function (error, response, body) {
         if (!error && response.statusCode === 200) {
-            //console.log(JSON.parse(body));
-            console.log("Title: " + body.Title);
-            console.log("Year: " + body.Year);
-            console.log("Rated " + body.Rated);
-            console.log("Rotten Tomatoes score: " + body.Ratings);
-            console.log("Produced in: " + body.Country);
-            console.log("Language: " + body.Language);
-            console.log("Plot: " + body.Plot);
-            console.log("Actors: " + body.Actors);
+            // console.log(JSON.parse(body));
+            var movieIinfo = JSON.parse(body);
+            console.log("Title: " + movieIinfo.Title);
+            console.log("Year: " + movieIinfo.Year);
+            console.log("Rated " + movieIinfo.Rated);
+            console.log("Rotten Tomatoes score: " + movieIinfo.Ratings[2].Value);
+            console.log("Produced in: " + movieIinfo.Country);
+            console.log("Language: " + movieIinfo.Language);
+            console.log("Plot: " + movieIinfo.Plot);
+            console.log("Actors: " + movieIinfo.Actors);
         };
     });
 };
@@ -99,7 +102,7 @@ function logActions() {
             console.log(err);
         }
         else {
-            console.log("Content Added!");
+            console.log("User actions added to log.txt!");
         }
     });
 }
