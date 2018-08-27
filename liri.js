@@ -11,6 +11,9 @@ var searchItem = process.argv[3];
 
 function concertThis(artist_name) {
     var preformerName = artist_name;
+    if (preformerName === undefined) {
+        preformerName = "drake";
+    };
     request("https://rest.bandsintown.com/artists/" + preformerName + "/events?app_id=codingbootcamp", function (error, response, body) {
         if (!error && response.statusCode === 200) {
             console.log(JSON.parse(body));
@@ -59,6 +62,9 @@ function spotifyThisSong(user_song) {
 };
 function movieThis(user_movie) {
     var movieName = user_movie;
+    if (movieName === undefined) {
+        movieName = "shrek";
+    };
     request("http://www.omdbapi.com/?t=" + movieName + "&apikey=trilogy", function (error, response, body) {
         if (!error && response.statusCode === 200) {
             //console.log(JSON.parse(body));
